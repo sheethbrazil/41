@@ -1201,7 +1201,78 @@ def suggestion_staff_allowed(member: discord.Member) -> bool:
             JUNIOR_ADMIN_ROLE_ID,
         }
     )
+# =========================================================
+# PANEL SYSTEM
+# =========================================================
 
+class PanelView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="القوانين", style=discord.ButtonStyle.secondary, custom_id="panel_rules")
+    async def rules(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = make_embed("📜 القوانين", SERVER_RULES_TEXT, EMBED_COLOR)
+        embed.set_image(url=RULES_IMAGE_URL)
+        await interaction.response.send_message(embed=embed, view=RulesSubView(), ephemeral=True)
+
+    @discord.ui.button(label="المعلومات", style=discord.ButtonStyle.secondary, custom_id="panel_info")
+    async def info(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = make_embed("📖 المعلومات", INFO_FULL_TEXT, EMBED_COLOR)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @discord.ui.button(label="السوشال", style=discord.ButtonStyle.secondary, custom_id="panel_social")
+    async def social(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = make_embed("🌐 السوشال", SOCIAL_TEXT, EMBED_COLOR)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @discord.ui.button(label="الرتب", style=discord.ButtonStyle.secondary, custom_id="panel_roles")
+    async def roles(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = make_embed("🎭 الرتب", ROLES_INFO_TEXT, EMBED_COLOR)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @discord.ui.button(label="لفلات", style=discord.ButtonStyle.secondary, custom_id="panel_levels")
+    async def levels(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = make_embed("⭐ لفلات", LEVEL_ROLES_INFO_TEXT, EMBED_COLOR)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @discord.ui.button(label="التقديم", style=discord.ButtonStyle.success, custom_id="panel_apply")
+    async def apply(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(embed=apply_start_embed(), view=ApplyStartView(), ephemeral=True)
+
+
+class RulesSubView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=300)
+
+    @discord.ui.button(label="الشات العام", style=discord.ButtonStyle.secondary)
+    async def chat(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = make_embed("🗨️ قوانين الشات", PUBLIC_CHAT_RULES_TEXT, EMBED_COLOR)
+        await interaction.response.edit_message(embed=embed, view=RulesBackView())
+
+    @discord.ui.button(label="الفعاليات", style=discord.ButtonStyle.secondary)
+    async def events(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = make_embed("🎉 قوانين الفعاليات", EVENT_CHAT_RULES_TEXT, EMBED_COLOR)
+        await interaction.response.edit_message(embed=embed, view=RulesBackView())
+
+
+class RulesBackView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=300)
+
+    @discord.ui.button(label="رجوع", style=discord.ButtonStyle.secondary)
+    async def back(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = make_embed("📜 القوانين", SERVER_RULES_TEXT, EMBED_COLOR)
+        embed.set_image(url=RULES_IMAGE_URL)
+        await interaction.response.edit_message(embed=embed, view=RulesSubView())
+
+
+def apply_start_embed():
+    embed = discord.Embed(
+        description="# تقديم",
+        color=EMBED_COLOR
+    )
+    embed.set_image(url=APPLY_IMAGE_URL)
+    return embed
 # =========================================================
 # BOT CLASS
 # =========================================================
